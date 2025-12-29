@@ -1,10 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Package, Clock, CheckCircle, Truck } from "lucide-react";
+import { ArrowLeft, Package, Clock, CheckCircle, Truck, XCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface OrderItem {
   id: string;
@@ -30,8 +42,10 @@ interface Order {
 const Orders = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -60,6 +74,30 @@ const Orders = () => {
     setLoading(false);
   };
 
+  const handleCancelOrder = async (orderId: string) => {
+    setCancellingId(orderId);
+    
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: "cancelled" })
+      .eq("id", orderId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to cancel order. Please try again.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Order Cancelled",
+        description: "Your order has been cancelled successfully.",
+      });
+      fetchOrders();
+    }
+    setCancellingId(null);
+  };
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "confirmed":
@@ -68,6 +106,8 @@ const Orders = () => {
         return <Truck className="w-5 h-5 text-blue-500" />;
       case "delivered":
         return <Package className="w-5 h-5 text-primary" />;
+      case "cancelled":
+        return <XCircle className="w-5 h-5 text-destructive" />;
       default:
         return <Clock className="w-5 h-5 text-yellow-500" />;
     }
@@ -81,9 +121,15 @@ const Orders = () => {
         return "Shipped";
       case "delivered":
         return "Delivered";
+      case "cancelled":
+        return "Cancelled";
       default:
         return "Processing";
     }
+  };
+
+  const canCancel = (status: string) => {
+    return status === "confirmed" || status === "pending";
   };
 
   if (authLoading || loading) {
@@ -129,7 +175,11 @@ const Orders = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-card border border-border rounded-xl p-6"
+                className={`bg-card border rounded-xl p-6 ${
+                  order.status === "cancelled"
+                    ? "border-destructive/30 opacity-75"
+                    : "border-border"
+                }`}
               >
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
                   <div>
@@ -146,7 +196,13 @@ const Orders = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusIcon(order.status)}
-                    <span className="text-foreground font-medium">
+                    <span
+                      className={`font-medium ${
+                        order.status === "cancelled"
+                          ? "text-destructive"
+                          : "text-foreground"
+                      }`}
+                    >
                       {getStatusText(order.status)}
                     </span>
                   </div>
@@ -180,8 +236,47 @@ const Orders = () => {
                     <span className="capitalize">{order.payment_method}</span> •{" "}
                     <span className="capitalize">{order.payment_status}</span>
                   </div>
-                  <div className="text-lg font-semibold text-foreground">
-                    Total: ₹{Number(order.total).toLocaleString()}
+                  <div className="flex items-center gap-4">
+                    <div className="text-lg font-semibold text-foreground">
+                      Total: ₹{Number(order.total).toLocaleString()}
+                    </div>
+                    {canCancel(order.status) && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-destructive border-destructive/50 hover:bg-destructive/10"
+                            disabled={cancellingId === order.id}
+                          >
+                            <XCircle className="w-4 h-4 mr-2" />
+                            {cancellingId === order.id ? "Cancelling..." : "Cancel Order"}
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="bg-card border-border">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="flex items-center gap-2">
+                              <AlertCircle className="w-5 h-5 text-destructive" />
+                              Cancel Order
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to cancel this order? This action
+                              cannot be undone. If you paid online, the refund will be
+                              processed within 5-7 business days.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Keep Order</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleCancelOrder(order.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Yes, Cancel Order
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
                   </div>
                 </div>
               </motion.div>
