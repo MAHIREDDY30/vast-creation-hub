@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ShoppingBag, User, LogOut, Package } from "lucide-react";
+import { Menu, X, ShoppingBag, User, LogOut, Package, Heart } from "lucide-react";
 import { Button } from "./ui/button";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/hooks/useAuth";
+import { useWishlist } from "@/hooks/useWishlist";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +25,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { totalItems, setIsCartOpen } = useCart();
+  const { items: wishlistItems } = useWishlist();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -82,6 +84,23 @@ const Navbar = () => {
 
         {/* Right Actions */}
         <div className="flex items-center gap-4">
+          {/* Wishlist Button */}
+          <button
+            onClick={() => navigate("/wishlist")}
+            className="relative p-2 hover:bg-secondary/50 rounded-full transition-colors"
+          >
+            <Heart size={24} />
+            {wishlistItems.length > 0 && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center"
+              >
+                {wishlistItems.length}
+              </motion.span>
+            )}
+          </button>
+
           {/* Cart Button */}
           <button
             onClick={() => setIsCartOpen(true)}
@@ -114,6 +133,13 @@ const Navbar = () => {
                 >
                   <Package className="w-4 h-4 mr-2" />
                   My Orders
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => navigate("/wishlist")}
+                  className="cursor-pointer"
+                >
+                  <Heart className="w-4 h-4 mr-2" />
+                  Wishlist
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -179,6 +205,17 @@ const Navbar = () => {
                   >
                     <Package className="w-4 h-4 mr-2" />
                     My Orders
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => {
+                      navigate("/wishlist");
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <Heart className="w-4 h-4 mr-2" />
+                    Wishlist
                   </Button>
                   <Button
                     variant="ghost"
