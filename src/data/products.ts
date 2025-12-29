@@ -239,7 +239,7 @@ export const products: Product[] = [
     price: 12999,
     badge: "Bridal",
     badgeColor: "bg-primary",
-    image: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&auto=format&fit=crop&q=80",
     description: "Stunning bridal lehenga with heavy embroidery and stonework. Perfect for weddings and grand celebrations.",
     sizes: ["S", "M", "L", "XL"],
     colors: ["Red", "Maroon", "Pink"],
