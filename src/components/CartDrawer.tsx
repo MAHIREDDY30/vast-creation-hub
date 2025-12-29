@@ -1,8 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { useCart } from "@/context/CartContext";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const CartDrawer = () => {
   const {
@@ -15,13 +16,16 @@ const CartDrawer = () => {
     isCartOpen,
     setIsCartOpen,
   } = useCart();
-  const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleCheckout = () => {
-    toast({
-      title: "Proceeding to Checkout",
-      description: `${totalItems} items totaling $${totalPrice.toFixed(2)}`,
-    });
+    setIsCartOpen(false);
+    if (!user) {
+      navigate("/auth");
+    } else {
+      navigate("/checkout");
+    }
   };
 
   return (
@@ -111,7 +115,7 @@ const CartDrawer = () => {
                           {item.category}
                         </p>
                         <p className="text-primary font-bold mt-1">
-                          ${item.price}
+                          ₹{item.price.toLocaleString()}
                         </p>
                       </div>
 
@@ -158,15 +162,19 @@ const CartDrawer = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>₹{totalPrice.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span className="text-primary">Free</span>
+                    <span className="text-primary">
+                      {totalPrice > 2000 ? "Free" : "₹99"}
+                    </span>
                   </div>
                   <div className="flex justify-between font-heading font-bold text-lg pt-2 border-t border-border">
                     <span>Total</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>
+                      ₹{(totalPrice + (totalPrice > 2000 ? 0 : 99)).toLocaleString()}
+                    </span>
                   </div>
                 </div>
 
@@ -178,7 +186,7 @@ const CartDrawer = () => {
                     className="w-full"
                     onClick={handleCheckout}
                   >
-                    Checkout
+                    {user ? "Proceed to Checkout" : "Sign In to Checkout"}
                   </Button>
                   <Button
                     variant="ghost"
