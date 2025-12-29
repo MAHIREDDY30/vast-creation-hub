@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingBag } from "lucide-react";
 import { Button } from "./ui/button";
+import { useCart } from "@/context/CartContext";
 
 const navLinks = [
   { name: "Home", href: "#home" },
@@ -13,6 +14,7 @@ const navLinks = [
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { totalItems, setIsCartOpen } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,18 +64,38 @@ const Navbar = () => {
           ))}
         </nav>
 
-        {/* CTA Button */}
-        <Button variant="hero" size="lg" className="hidden lg:flex">
-          Get In Touch
-        </Button>
+        {/* Right Actions */}
+        <div className="flex items-center gap-4">
+          {/* Cart Button */}
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="relative p-2 hover:bg-secondary/50 rounded-full transition-colors"
+          >
+            <ShoppingBag size={24} />
+            {totalItems > 0 && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center"
+              >
+                {totalItems}
+              </motion.span>
+            )}
+          </button>
 
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="lg:hidden p-2 text-foreground"
-        >
-          {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-        </button>
+          {/* CTA Button */}
+          <Button variant="hero" size="lg" className="hidden lg:flex">
+            Get In Touch
+          </Button>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden p-2 text-foreground"
+          >
+            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}

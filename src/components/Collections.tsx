@@ -2,6 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Heart } from "lucide-react";
 import { Button } from "./ui/button";
+import { useCart } from "@/context/CartContext";
+import { useToast } from "@/hooks/use-toast";
 
 const categories = [
   "All",
@@ -70,11 +72,27 @@ const products = [
 
 const Collections = () => {
   const [activeCategory, setActiveCategory] = useState("All");
+  const { addToCart } = useCart();
+  const { toast } = useToast();
 
   const filteredProducts =
     activeCategory === "All"
       ? products
       : products.filter((p) => p.category === activeCategory);
+
+  const handleAddToCart = (product: typeof products[0]) => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      image: product.image,
+    });
+    toast({
+      title: "Added to Cart",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
 
   return (
     <section id="collections" className="py-24 relative">
@@ -162,13 +180,19 @@ const Collections = () => {
 
                     {/* Quick Actions */}
                     <div className="absolute bottom-4 left-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
-                      <Button variant="hero" size="sm" className="flex-1">
+                      <Button
+                        variant="hero"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => handleAddToCart(product)}
+                      >
                         Buy Now
                       </Button>
                       <Button
                         variant="outline"
                         size="icon"
                         className="bg-background/80 backdrop-blur-sm border-border/50"
+                        onClick={() => handleAddToCart(product)}
                       >
                         <ShoppingBag size={18} />
                       </Button>
