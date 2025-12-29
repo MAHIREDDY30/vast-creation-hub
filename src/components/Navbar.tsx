@@ -1,8 +1,17 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ShoppingBag } from "lucide-react";
+import { Menu, X, ShoppingBag, User, LogOut, Package } from "lucide-react";
 import { Button } from "./ui/button";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 const navLinks = [
   { name: "Home", href: "#home" },
@@ -15,6 +24,8 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { totalItems, setIsCartOpen } = useCart();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,6 +34,11 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <motion.header
@@ -83,10 +99,42 @@ const Navbar = () => {
             )}
           </button>
 
-          {/* CTA Button */}
-          <Button variant="hero" size="lg" className="hidden lg:flex">
-            Get In Touch
-          </Button>
+          {/* User Menu */}
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="p-2 hover:bg-secondary/50 rounded-full transition-colors">
+                  <User size={24} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-card border-border">
+                <DropdownMenuItem
+                  onClick={() => navigate("/orders")}
+                  className="cursor-pointer"
+                >
+                  <Package className="w-4 h-4 mr-2" />
+                  My Orders
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleSignOut}
+                  className="cursor-pointer text-destructive focus:text-destructive"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button
+              variant="hero"
+              size="lg"
+              className="hidden lg:flex"
+              onClick={() => navigate("/auth")}
+            >
+              Sign In
+            </Button>
+          )}
 
           {/* Mobile Menu Button */}
           <button
@@ -118,9 +166,45 @@ const Navbar = () => {
                   {link.name}
                 </a>
               ))}
-              <Button variant="hero" size="lg" className="mt-4">
-                Get In Touch
-              </Button>
+              {user ? (
+                <>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="mt-4"
+                    onClick={() => {
+                      navigate("/orders");
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <Package className="w-4 h-4 mr-2" />
+                    My Orders
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="lg"
+                    onClick={() => {
+                      handleSignOut();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="hero"
+                  size="lg"
+                  className="mt-4"
+                  onClick={() => {
+                    navigate("/auth");
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  Sign In
+                </Button>
+              )}
             </nav>
           </motion.div>
         )}
