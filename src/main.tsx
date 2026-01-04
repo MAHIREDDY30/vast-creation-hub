@@ -3,19 +3,14 @@ import App from "./App.tsx";
 import "./index.css";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
 
-// Surface startup errors (prevents blank pages on static hosts)
-window.addEventListener("error", (event) => {
-  // eslint-disable-next-line no-console
-  console.error("Global error:", event.error || event.message);
-});
-window.addEventListener("unhandledrejection", (event) => {
-  // eslint-disable-next-line no-console
-  console.error("Unhandled promise rejection:", event.reason);
-});
+// Mark successful startup for GitHub Pages diagnostics (see index.html)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(window as any).__APP_BOOTED__ = true;
 
 createRoot(document.getElementById("root")!).render(
   <AppErrorBoundary>
     <App />
   </AppErrorBoundary>
 );
+
 

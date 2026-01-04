@@ -16,6 +16,25 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@Lovable" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <script>
+      // If the app bundle doesn't load (common on GitHub Pages path issues), show a helpful message.
+      window.__APP_BOOTED__ = false;
+      setTimeout(() => {
+        if (!window.__APP_BOOTED__) {
+          const root = document.getElementById("root");
+          if (root) {
+            root.innerHTML =
+              '<div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;padding:24px">' +
+              '<h1 style="font-size:20px;margin:0 0 8px 0">App is not loading</h1>' +
+              '<p style="margin:0 0 12px 0">This usually means GitHub Pages is not serving the built JS/CSS correctly.</p>' +
+              '<p style="margin:0 0 6px 0"><b>Step 1:</b> Open <code>/vast-creation-hub/health.html</code> to confirm deployment.</p>' +
+              '<p style="margin:0"><b>Step 2:</b> Open DevTools → Console/Network to see which file is 404.</p>' +
+              '</div>';
+          }
+        }
+      }, 3000);
+    </script>
   </head>
 
   <body>
