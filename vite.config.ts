@@ -5,8 +5,9 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  // GitHub Pages hosts the app under a repo sub-path. Only apply this in production builds.
-  base: mode === "production" ? "/vast-creation-hub/" : "/",
+  // Use relative asset paths in production so the build works on GitHub Pages
+  // regardless of the repository sub-path.
+  base: mode === "production" ? "./" : "/",
   server: {
     host: "::",
     port: 8080,
