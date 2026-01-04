@@ -93,7 +93,8 @@ const Orders = () => {
         title: "Order Cancelled",
         description: "Your order has been cancelled successfully.",
       });
-      fetchOrders();
+      // Remove the cancelled order from the list
+      setOrders(orders.filter(order => order.id !== orderId));
     }
     setCancellingId(null);
   };
