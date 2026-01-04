@@ -445,6 +445,56 @@ const Checkout = () => {
 
                 <div
                   className={`relative border rounded-lg p-4 cursor-pointer transition-colors ${
+                    paymentMethod === "phonepe"
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-muted-foreground"
+                  }`}
+                >
+                  <RadioGroupItem
+                    value="phonepe"
+                    id="phonepe"
+                    className="absolute top-4 right-4"
+                  />
+                  <label htmlFor="phonepe" className="flex items-center gap-3 cursor-pointer">
+                    <div className="w-6 h-6 bg-purple-600 rounded flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">Pe</span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">PhonePe</p>
+                      <p className="text-sm text-muted-foreground">
+                        Pay using PhonePe UPI
+                      </p>
+                    </div>
+                  </label>
+                </div>
+
+                <div
+                  className={`relative border rounded-lg p-4 cursor-pointer transition-colors ${
+                    paymentMethod === "paytm"
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-muted-foreground"
+                  }`}
+                >
+                  <RadioGroupItem
+                    value="paytm"
+                    id="paytm"
+                    className="absolute top-4 right-4"
+                  />
+                  <label htmlFor="paytm" className="flex items-center gap-3 cursor-pointer">
+                    <div className="w-6 h-6 bg-blue-500 rounded flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">Pt</span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">Paytm</p>
+                      <p className="text-sm text-muted-foreground">
+                        Pay using Paytm Wallet or UPI
+                      </p>
+                    </div>
+                  </label>
+                </div>
+
+                <div
+                  className={`relative border rounded-lg p-4 cursor-pointer transition-colors ${
                     paymentMethod === "upi"
                       ? "border-primary bg-primary/5"
                       : "border-border hover:border-muted-foreground"
@@ -458,9 +508,9 @@ const Checkout = () => {
                   <label htmlFor="upi" className="flex items-center gap-3 cursor-pointer">
                     <Smartphone className="w-6 h-6 text-foreground" />
                     <div>
-                      <p className="font-medium text-foreground">UPI / Phone Pay</p>
+                      <p className="font-medium text-foreground">Other UPI Apps</p>
                       <p className="text-sm text-muted-foreground">
-                        Pay using GPay, PhonePe, Paytm, or any UPI app
+                        Pay using GPay, BHIM, or any other UPI app
                       </p>
                     </div>
                   </label>

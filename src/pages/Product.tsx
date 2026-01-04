@@ -17,6 +17,7 @@ import { getProductById, Product as ProductType } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useToast } from "@/hooks/use-toast";
+import SizeGuide from "@/components/SizeGuide";
 
 const Product = () => {
   const { id } = useParams();
@@ -142,9 +143,12 @@ const Product = () => {
             {/* Size Selection */}
             {product.sizes && product.sizes.length > 0 && (
               <div>
-                <label className="block text-sm font-medium text-foreground mb-3">
-                  Size
-                </label>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-sm font-medium text-foreground">
+                    Size
+                  </label>
+                  <SizeGuide category={product.category} />
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {product.sizes.map((size) => (
                     <button
