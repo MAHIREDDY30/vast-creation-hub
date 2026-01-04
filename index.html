@@ -40,7 +40,17 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root">Loading…</div>
-    <script type="module" src="src/main.tsx"></script>
+    <script
+      type="module"
+      src="src/main.tsx"
+      onerror="(function(e){var root=document.getElementById('root'); if(root){root.innerHTML='<div style=\'font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;padding:24px\'>' +
+        '<h1 style=\'font-size:20px;margin:0 0 8px 0\'>Main bundle failed to load</h1>' +
+        '<p style=\'margin:0 0 12px 0\'>GitHub Pages returned an error for the app JS. This is almost always a 404 path/base issue.</p>' +
+        '<p style=\'margin:0 0 6px 0\'><b>URL:</b> <code>'+location.href+'</code></p>' +
+        '<p style=\'margin:0 0 6px 0\'><b>Tried to load:</b> <code>'+ (e && e.target && e.target.src ? e.target.src : '(unknown)') +'</code></p>' +
+        '<p style=\'margin:0\'>Open DevTools → Network and look for the red request above.</p>' +
+        '</div>'; }})(event)"
+    ></script>
   </body>
 </html>
 
