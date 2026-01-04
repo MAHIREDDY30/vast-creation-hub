@@ -66,6 +66,7 @@ const Orders = () => {
         *,
         order_items (*)
       `)
+      .neq("status", "cancelled")
       .order("created_at", { ascending: false });
 
     if (!error && data) {
