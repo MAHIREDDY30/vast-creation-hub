@@ -15,11 +15,18 @@ import {
 } from "./ui/dropdown-menu";
 
 const navLinks = [
-  { name: "Home", href: "#home" },
-  { name: "Collections", href: "#collections" },
-  { name: "Featured", href: "#featured" },
-  { name: "Contact", href: "#contact" },
+  { name: "Home", href: "home" },
+  { name: "Collections", href: "collections" },
+  { name: "Featured", href: "featured" },
+  { name: "Contact", href: "contact" },
 ];
+
+const scrollToSection = (sectionId: string) => {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth" });
+  }
+};
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -53,7 +60,10 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
-        <a href="#home" className="flex items-center gap-3">
+        <button
+          onClick={() => scrollToSection("home")}
+          className="flex items-center gap-3"
+        >
           <div className="relative w-12 h-12">
             <div className="absolute inset-0 border-2 border-primary rotate-45" />
             <div className="absolute inset-3 bg-primary rounded-full" />
@@ -66,19 +76,19 @@ const Navbar = () => {
               Designed in India · Worn Worldwide
             </p>
           </div>
-        </a>
+        </button>
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-10">
           {navLinks.map((link) => (
-            <a
+            <button
               key={link.name}
-              href={link.href}
+              onClick={() => scrollToSection(link.href)}
               className="text-sm font-heading font-medium uppercase tracking-wider text-foreground/80 hover:text-primary transition-colors relative group"
             >
               {link.name}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
-            </a>
+            </button>
           ))}
         </nav>
 
@@ -183,14 +193,16 @@ const Navbar = () => {
           >
             <nav className="flex flex-col p-6 gap-4">
               {navLinks.map((link) => (
-                <a
+                <button
                   key={link.name}
-                  href={link.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-sm font-heading font-medium uppercase tracking-wider text-foreground/80 hover:text-primary transition-colors py-2"
+                  onClick={() => {
+                    scrollToSection(link.href);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="text-sm font-heading font-medium uppercase tracking-wider text-foreground/80 hover:text-primary transition-colors py-2 text-left"
                 >
                   {link.name}
-                </a>
+                </button>
               ))}
               {user ? (
                 <>
