@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useRef, useEffect } from "react";
 import vastraCatalogShowcase from "@/assets/vastra-catalog-showcase.mp4";
-import indianMusic from "@/assets/indian-flute-tabla.mp3";
+import fashionMusic from "@/assets/fashion-future-bass.mp3";
 
 const MediaShowcase = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -46,7 +46,7 @@ const MediaShowcase = () => {
     <section id="media-gallery" className="py-20 bg-card/50">
       <div className="container mx-auto px-6">
         {/* Hidden Audio Element */}
-        <audio ref={audioRef} src={indianMusic} loop />
+        <audio ref={audioRef} src={fashionMusic} loop />
 
         {/* Section Header */}
         <motion.div
