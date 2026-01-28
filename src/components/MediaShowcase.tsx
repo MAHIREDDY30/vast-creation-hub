@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import vastraHappyShowcase from "@/assets/vastra-happy-showcase.mp4";
 import happyMusic from "@/assets/happy-upbeat-music.mp3";
@@ -9,20 +9,24 @@ const MediaShowcase = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [needsGesture, setNeedsGesture] = useState(false);
 
-  const tryPlayAudio = useMemo(
-    () => async () => {
-      const audio = audioRef.current;
-      if (!audio) return;
-      try {
-        await audio.play();
-        setNeedsGesture(false);
-      } catch {
-        // Autoplay can be blocked until user interacts.
-        setNeedsGesture(true);
-      }
-    },
-    []
-  );
+  // IMPORTANT: keep this *non-async*.
+  // Some browsers (notably iOS Safari) can treat async/await as leaving the
+  // "user gesture" call stack, causing play() to be blocked.
+  const tryPlayAudio = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.muted = false;
+    audio.volume = 1;
+
+    const p = audio.play();
+    // play() returns a promise in modern browsers.
+    if (p && typeof (p as Promise<void>).then === "function") {
+      (p as Promise<void>)
+        .then(() => setNeedsGesture(false))
+        .catch(() => setNeedsGesture(true));
+    }
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -42,7 +46,7 @@ const MediaShowcase = () => {
 
     const handlePlay = () => {
       syncAudio();
-      void tryPlayAudio();
+      tryPlayAudio();
     };
 
     const handlePause = () => {
@@ -66,7 +70,7 @@ const MediaShowcase = () => {
 
   // Autoplay policies: allow user gesture anywhere in this section to enable audio.
   const handleEnableMusic = () => {
-    void tryPlayAudio();
+    tryPlayAudio();
   };
 
   return (
@@ -115,6 +119,7 @@ const MediaShowcase = () => {
                 className="w-full h-full object-cover"
                 controls
                 onPlay={handleEnableMusic}
+                playsInline
                 poster="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800&auto=format&fit=crop&q=80"
               >
                 <source src={vastraHappyShowcase} type="video/mp4" />
