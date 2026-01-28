@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useRef, useEffect } from "react";
-import vastraCatalogShowcase from "@/assets/vastra-catalog-showcase.mp4";
-import fashionMusic from "@/assets/fashion-future-bass.mp3";
+import vastraHappyShowcase from "@/assets/vastra-happy-showcase.mp4";
+import happyMusic from "@/assets/happy-upbeat-music.mp3";
 
 const MediaShowcase = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -46,7 +46,7 @@ const MediaShowcase = () => {
     <section id="media-gallery" className="py-20 bg-card/50">
       <div className="container mx-auto px-6">
         {/* Hidden Audio Element */}
-        <audio ref={audioRef} src={fashionMusic} loop />
+        <audio ref={audioRef} src={happyMusic} loop />
 
         {/* Section Header */}
         <motion.div
@@ -83,7 +83,7 @@ const MediaShowcase = () => {
                 controls
                 poster="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800&auto=format&fit=crop&q=80"
               >
-                <source src={vastraCatalogShowcase} type="video/mp4" />
+                <source src={vastraHappyShowcase} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
