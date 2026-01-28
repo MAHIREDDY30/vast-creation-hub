@@ -1,53 +1,12 @@
 import { motion } from "framer-motion";
-import { useRef, useEffect } from "react";
-import vastraHappyShowcase from "@/assets/vastra-happy-showcase.mp4";
-import happyMusic from "@/assets/happy-upbeat-music.mp3";
 
 const MediaShowcase = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    const audio = audioRef.current;
-
-    if (!video || !audio) return;
-
-    const syncAudio = () => {
-      if (audio) {
-        audio.currentTime = video.currentTime;
-      }
-    };
-
-    const handlePlay = () => {
-      audio?.play();
-    };
-
-    const handlePause = () => {
-      audio?.pause();
-    };
-
-    const handleSeeked = () => {
-      syncAudio();
-    };
-
-    video.addEventListener("play", handlePlay);
-    video.addEventListener("pause", handlePause);
-    video.addEventListener("seeked", handleSeeked);
-
-    return () => {
-      video.removeEventListener("play", handlePlay);
-      video.removeEventListener("pause", handlePause);
-      video.removeEventListener("seeked", handleSeeked);
-    };
-  }, []);
+  // Using a reliable external fashion video
+  const videoUrl = "https://videos.pexels.com/video-files/6567092/6567092-uhd_2560_1440_30fps.mp4";
 
   return (
     <section id="media-gallery" className="py-20 bg-card/50">
       <div className="container mx-auto px-6">
-        {/* Hidden Audio Element */}
-        <audio ref={audioRef} src={happyMusic} loop />
-
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -78,12 +37,11 @@ const MediaShowcase = () => {
           >
             <div className="aspect-video bg-background">
               <video
-                ref={videoRef}
                 className="w-full h-full object-cover"
                 controls
                 poster="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800&auto=format&fit=crop&q=80"
               >
-                <source src={vastraHappyShowcase} type="video/mp4" />
+                <source src={videoUrl} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
