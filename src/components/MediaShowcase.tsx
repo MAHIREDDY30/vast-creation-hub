@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import vastraShowcase from "@/assets/vastra-showcase.mp4";
+import vastraIndianShowcase from "@/assets/vastra-indian-showcase.mp4";
 
 const MediaShowcase = () => {
   return (
@@ -39,7 +39,7 @@ const MediaShowcase = () => {
                 controls
                 poster="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop&q=80"
               >
-                <source src={vastraShowcase} type="video/mp4" />
+                <source src={vastraIndianShowcase} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
