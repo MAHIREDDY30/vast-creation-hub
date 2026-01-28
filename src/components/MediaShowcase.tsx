@@ -1,25 +1,44 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
+import { Play, Pause } from "lucide-react";
 
 import happyMusic from "@/assets/happy-upbeat-music.mp3";
 import vastraHappyShowcase from "@/assets/vastra-happy-showcase.mp4";
 
 const MediaShowcase = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  const startMusic = useCallback(() => {
+  const playBoth = useCallback(() => {
+    const video = videoRef.current;
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!video || !audio) return;
+
+    // Play both in the same gesture
+    video.play().catch(() => {});
     audio.muted = false;
     audio.volume = 1;
     audio.play().catch(() => {});
+    setIsPlaying(true);
   }, []);
 
-  const stopMusic = useCallback(() => {
+  const pauseBoth = useCallback(() => {
+    const video = videoRef.current;
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!video || !audio) return;
+
+    video.pause();
     audio.pause();
-    audio.currentTime = 0;
+    setIsPlaying(false);
   }, []);
+
+  const togglePlay = useCallback(() => {
+    if (isPlaying) {
+      pauseBoth();
+    } else {
+      playBoth();
+    }
+  }, [isPlaying, playBoth, pauseBoth]);
 
   return (
     <section id="media-gallery" className="py-20 bg-card/50">
@@ -34,19 +53,31 @@ const MediaShowcase = () => {
           </audio>
 
           <div className="rounded-2xl overflow-hidden border border-border/30 shadow-2xl">
-            <div className="aspect-video bg-black">
+            <div 
+              className="relative aspect-video bg-black cursor-pointer"
+              onClick={togglePlay}
+            >
               <video
+                ref={videoRef}
                 className="w-full h-full object-cover"
-                controls
                 playsInline
-                onPlay={startMusic}
-                onPause={stopMusic}
-                onEnded={stopMusic}
+                loop
                 poster="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop&q=80"
               >
                 <source src={vastraHappyShowcase} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
+
+              {/* Big play/pause button overlay */}
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors">
+                <div className="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                  {isPlaying ? (
+                    <Pause className="w-10 h-10 text-black" />
+                  ) : (
+                    <Play className="w-10 h-10 text-black ml-1" />
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
