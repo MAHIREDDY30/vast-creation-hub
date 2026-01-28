@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useCallback, useRef, useState } from "react";
 
 import happyMusic from "@/assets/happy-upbeat-music.mp3";
+import vastraHappyShowcase from "@/assets/vastra-happy-showcase.mp4";
 
 const MediaShowcase = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -94,7 +95,7 @@ const MediaShowcase = () => {
                 poster="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800&auto=format&fit=crop&q=80"
               >
                 <source
-                  src="https://cdn.pixabay.com/video/2020/05/25/40130-424930032_large.mp4"
+                  src={vastraHappyShowcase}
                   type="video/mp4"
                 />
                 Your browser does not support the video tag.
