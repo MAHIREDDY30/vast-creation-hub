@@ -1,39 +1,56 @@
-import { motion } from "framer-motion";
+import { useCallback, useRef } from "react";
+
+import happyMusic from "@/assets/happy-upbeat-music.mp3";
+import vastraShowcase from "@/assets/vastra-showcase.mp4";
 
 const MediaShowcase = () => {
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  // Keep non-async for better iOS gesture compatibility
+  const startMusic = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.muted = false;
+    audio.volume = 1;
+    audio.currentTime = 0;
+    const p = audio.play();
+    if (p && typeof (p as Promise<void>).catch === "function") {
+      (p as Promise<void>).catch(() => {
+        // If blocked, user can press play again.
+      });
+    }
+  }, []);
+
+  const stopMusic = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.pause();
+    audio.currentTime = 0;
+  }, []);
+
   return (
     <section id="media-gallery" className="py-20 bg-card/50">
       <div className="container mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <h2 className="font-heading text-4xl md:text-5xl font-bold">
-            Fashion <span className="text-gradient">Collection</span>
-          </h2>
-        </motion.div>
-
         <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="rounded-2xl overflow-hidden shadow-2xl"
-          >
-            <div className="aspect-video">
-              <iframe
-                className="w-full h-full"
-                src="https://www.youtube.com/embed/JYbYsA_jV0E?rel=0"
-                title="Fashion Collection"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+          <audio ref={audioRef} preload="auto">
+            <source src={happyMusic} type="audio/mpeg" />
+          </audio>
+
+          <div className="rounded-2xl overflow-hidden border border-border/30 shadow-2xl">
+            <div className="aspect-video bg-background">
+              <video
+                className="w-full h-full object-cover"
+                controls
+                playsInline
+                onPlay={startMusic}
+                onPause={stopMusic}
+                onEnded={stopMusic}
+              >
+                <source src={vastraShowcase} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
