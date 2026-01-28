@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useRef, useEffect } from "react";
-import vastraFashionShowcase from "@/assets/vastra-fashion-showcase.mp4";
+import vastraCatalogShowcase from "@/assets/vastra-catalog-showcase.mp4";
 import indianMusic from "@/assets/indian-flute-tabla.mp3";
 
 const MediaShowcase = () => {
@@ -83,7 +83,7 @@ const MediaShowcase = () => {
                 controls
                 poster="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800&auto=format&fit=crop&q=80"
               >
-                <source src={vastraFashionShowcase} type="video/mp4" />
+                <source src={vastraCatalogShowcase} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
