@@ -5,18 +5,37 @@ import happyMusic from "@/assets/happy-upbeat-music.mp3";
 const MediaShowcase = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [musicPlaying, setMusicPlaying] = useState(false);
+  const [musicError, setMusicError] = useState<string | null>(null);
 
   const startMusic = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
+
+    setMusicError(null);
     audio.muted = false;
     audio.volume = 1;
     audio.currentTime = 0;
+
+    // Some mobile browsers require load() to be called after a gesture.
+    try {
+      audio.load();
+    } catch {
+      // ignore
+    }
+
     const p = audio.play();
     if (p && typeof (p as Promise<void>).then === "function") {
       (p as Promise<void>)
-        .then(() => setMusicPlaying(true))
-        .catch(() => setMusicPlaying(false));
+        .then(() => {
+          console.log("[MediaShowcase] music started");
+          setMusicPlaying(true);
+          setMusicError(null);
+        })
+        .catch((err) => {
+          console.warn("[MediaShowcase] music blocked", err);
+          setMusicPlaying(false);
+          setMusicError("Music blocked by browser. Tap the video area once, then tap Play Music again.");
+        });
     }
   }, []);
 
@@ -68,11 +87,22 @@ const MediaShowcase = () => {
               <div className="absolute bottom-4 left-4 right-4">
                 <button
                   type="button"
-                  onClick={musicPlaying ? stopMusic : startMusic}
-                  className="w-full bg-black/70 backdrop-blur-sm text-white rounded-xl px-4 py-3 text-sm font-medium hover:bg-black/80 transition-colors"
+                  onPointerDown={(e) => {
+                    // Keep the gesture in the same call stack for mobile browsers.
+                    e.preventDefault();
+                    if (musicPlaying) stopMusic();
+                    else startMusic();
+                  }}
+                  className="w-full bg-background/80 backdrop-blur-sm text-foreground rounded-xl px-4 py-3 text-sm font-medium border border-border/40"
                 >
-                  {musicPlaying ? "🔊 Music Playing - Tap to Stop" : "🔇 Tap to Play Music"}
+                  {musicPlaying ? "Music: On (tap to stop)" : "Tap to play music"}
                 </button>
+
+                {musicError && (
+                  <p className="mt-2 text-xs text-muted-foreground bg-background/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-border/40">
+                    {musicError}
+                  </p>
+                )}
               </div>
             </div>
           </div>
