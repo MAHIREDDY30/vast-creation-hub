@@ -29,6 +29,9 @@ const MediaShowcase = () => {
     const audio = audioRef.current;
     if (!video || !audio) return;
 
+    // Ensure volume is up (some browsers can persist volume=0 from prior sessions)
+    audio.volume = 1;
+
     const syncAudio = () => {
       try {
         audio.currentTime = video.currentTime;
@@ -61,8 +64,17 @@ const MediaShowcase = () => {
     };
   }, [tryPlayAudio]);
 
+  // Autoplay policies: allow user gesture anywhere in this section to enable audio.
+  const handleEnableMusic = () => {
+    void tryPlayAudio();
+  };
+
   return (
-    <section id="media-gallery" className="py-20 bg-card/50">
+    <section
+      id="media-gallery"
+      className="py-20 bg-card/50"
+      onPointerDown={handleEnableMusic}
+    >
       <div className="container mx-auto px-6">
         {/* Hidden Audio (separate from video track for consistent music) */}
         <audio ref={audioRef} preload="auto" loop>
@@ -97,28 +109,27 @@ const MediaShowcase = () => {
             viewport={{ once: true }}
             className="relative rounded-2xl overflow-hidden border border-border/30 shadow-2xl"
           >
-            <div className="aspect-video bg-background">
+            <div className="relative aspect-video bg-background">
               <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
                 controls
+                onPlay={handleEnableMusic}
                 poster="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800&auto=format&fit=crop&q=80"
               >
                 <source src={vastraHappyShowcase} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
 
-              {needsGesture && (
-                <div className="absolute inset-x-4 bottom-4">
-                  <button
-                    type="button"
-                    onClick={() => void tryPlayAudio()}
-                    className="w-full glass rounded-xl px-4 py-3 text-sm font-medium"
-                  >
-                    Tap to enable music
-                  </button>
-                </div>
-              )}
+              <div className="absolute inset-x-4 bottom-4">
+                <button
+                  type="button"
+                  onClick={handleEnableMusic}
+                  className="w-full glass rounded-xl px-4 py-3 text-sm font-medium"
+                >
+                  {needsGesture ? "Tap to enable music" : "Tap if music is off"}
+                </button>
+              </div>
             </div>
             <div className="p-4 bg-background/80 backdrop-blur-sm">
               <h3 className="font-heading text-lg font-semibold">VASTRA - Indian Fashion Showcase 2025</h3>
