@@ -1,22 +1,20 @@
 import { useCallback, useRef, useState } from "react";
 
 import happyMusic from "@/assets/happy-upbeat-music.mp3";
+import vastraHappyShowcase from "@/assets/vastra-happy-showcase.mp4";
 
 const MediaShowcase = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [musicPlaying, setMusicPlaying] = useState(false);
-  const [musicError, setMusicError] = useState<string | null>(null);
 
   const startMusic = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    setMusicError(null);
     audio.muted = false;
     audio.volume = 1;
     audio.currentTime = 0;
 
-    // Some mobile browsers require load() to be called after a gesture.
     try {
       audio.load();
     } catch {
@@ -26,16 +24,8 @@ const MediaShowcase = () => {
     const p = audio.play();
     if (p && typeof (p as Promise<void>).then === "function") {
       (p as Promise<void>)
-        .then(() => {
-          console.log("[MediaShowcase] music started");
-          setMusicPlaying(true);
-          setMusicError(null);
-        })
-        .catch((err) => {
-          console.warn("[MediaShowcase] music blocked", err);
-          setMusicPlaying(false);
-          setMusicError("Music blocked by browser. Tap the video area once, then tap Play Music again.");
-        });
+        .then(() => setMusicPlaying(true))
+        .catch(() => setMusicPlaying(false));
     }
   }, []);
 
@@ -64,45 +54,32 @@ const MediaShowcase = () => {
 
           <div className="rounded-2xl overflow-hidden border border-border/30 shadow-2xl">
             <div className="relative aspect-video bg-black">
-              {/* Using a reliable Pexels fashion video */}
               <video
                 className="w-full h-full object-cover"
                 controls
                 playsInline
-                autoPlay
-                muted
-                loop
                 onPlay={startMusic}
                 onPause={stopMusic}
                 onEnded={stopMusic}
+                poster="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop&q=80"
               >
-                <source
-                  src="https://videos.pexels.com/video-files/3753716/3753716-uhd_2560_1440_25fps.mp4"
-                  type="video/mp4"
-                />
+                <source src={vastraHappyShowcase} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
 
-              {/* Music toggle button */}
               <div className="absolute bottom-4 left-4 right-4">
                 <button
                   type="button"
                   onPointerDown={(e) => {
-                    // Keep the gesture in the same call stack for mobile browsers.
                     e.preventDefault();
+                    e.stopPropagation();
                     if (musicPlaying) stopMusic();
                     else startMusic();
                   }}
                   className="w-full bg-background/80 backdrop-blur-sm text-foreground rounded-xl px-4 py-3 text-sm font-medium border border-border/40"
                 >
-                  {musicPlaying ? "Music: On (tap to stop)" : "Tap to play music"}
+                  {musicPlaying ? "🔊 Music On - Tap to Stop" : "🔇 Tap to Play Music"}
                 </button>
-
-                {musicError && (
-                  <p className="mt-2 text-xs text-muted-foreground bg-background/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-border/40">
-                    {musicError}
-                  </p>
-                )}
               </div>
             </div>
           </div>
