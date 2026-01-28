@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const MediaShowcase = () => {
   return (
-    <section className="py-20 bg-card/50">
+    <section id="media-gallery" className="py-20 bg-card/50">
       <div className="container mx-auto px-6">
         {/* Section Header */}
         <motion.div

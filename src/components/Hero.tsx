@@ -81,10 +81,18 @@ const Hero = () => {
               transition={{ duration: 0.5, delay: 0.9 }}
               className="flex flex-wrap gap-4"
             >
-              <Button variant="hero" size="xl">
+              <Button 
+                variant="hero" 
+                size="xl"
+                onClick={() => document.getElementById('collections')?.scrollIntoView({ behavior: 'smooth' })}
+              >
                 Explore Collection
               </Button>
-              <Button variant="heroOutline" size="xl">
+              <Button 
+                variant="heroOutline" 
+                size="xl"
+                onClick={() => document.getElementById('media-gallery')?.scrollIntoView({ behavior: 'smooth' })}
+              >
                 Watch Runway
               </Button>
             </motion.div>
