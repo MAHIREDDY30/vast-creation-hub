@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import vastraShowcase from "@/assets/vastra-showcase.mp4";
 
 const MediaShowcase = () => {
   return (
@@ -38,17 +39,14 @@ const MediaShowcase = () => {
                 controls
                 poster="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop&q=80"
               >
-                <source
-                  src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
-                  type="video/mp4"
-                />
+                <source src={vastraShowcase} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
             <div className="p-4 bg-background/80 backdrop-blur-sm">
-              <h3 className="font-heading text-lg font-semibold">Fashion Runway 2025</h3>
+              <h3 className="font-heading text-lg font-semibold">VASTRA - Fashion Runway 2025</h3>
               <p className="text-muted-foreground text-sm mt-1">
-                Explore our latest collection on the runway
+                Experience our latest collection showcase
               </p>
             </div>
           </motion.div>
